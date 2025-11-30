@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "bibliometric-analysis"
+version = "0.2.0"
+description = "Sistema de análisis bibliométrico con IA usando Google Gemini"
+authors = ["Mateo Liberatore <liberatoremate98@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12.1"
+flask = "^3.1.2"
+requests = "^2.32.5"
+flask-login = "^0.6.3"
+jsonify = "^0.5"
+werkzeug = "^3.1.3"
+google-genai = "^1.47.0"
+flask-cors = "^6.0.1"
+python-dotenv = "^1.2.1"
+dotenv = "^0.9.9"
+pyjwt = "^2.10.1"
+pandas = "^2.2.3"
+openpyxl = "^3.1.5"
+PyPDF2 = "^3.0.1"
+reportlab = "^4.2.5"
+python-multipart = "^0.0.12"
+pytest = "^8.4.2"
+pytest-mock = "^3.15.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["test"]
