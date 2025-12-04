@@ -1,0 +1,23 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #0f0f0f;
+  font-family: system-ui, sans-serif;
+}
+
+.bg-secondary-950 { background-color: #0f0f0f; }
+.bg-secondary-900 { background-color: #1a1a1a; }
+.bg-secondary-800 { background-color: #262626; }
+.bg-secondary-700 { background-color: #333333; }
+
+.text-primary-50 { color: #f5f5f5; }
+.text-primary-100 { color: #e5e5e5; }
+.text-secondary-200 { color: #cccccc; }
+.text-secondary-300 { color: #bbbbbb; }
+.text-secondary-400 { color: #aaaaaa; }
+
+.bg-accent-600 { background-color: #2ecc71; }
+
+.bg-amber-900 { background-color: #78350f; }
+.border-amber-700 { border-color: #b45309; }
+.text-amber-200 { color: #fde68a; }
