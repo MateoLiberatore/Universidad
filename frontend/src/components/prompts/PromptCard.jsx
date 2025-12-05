@@ -1,37 +1,33 @@
 import React from "react";
+import Button from "../UI/Button";
 
-export default function PromptCard({ prompt, onUse, onEdit, onDelete }) {
+export default function PromptCard(props) {
+  const { title, content, onDelete } = props;
+
+  function handleDelete() {
+    if (onDelete) onDelete();
+  }
+
   return (
-    <div className="p-4 bg-secondary-950 border border-secondary-800 rounded-xl space-y-2 hover:border-accent-500 transition">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm text-primary-50 font-semibold">{prompt.title}</h3>
-        <span className="text-xs text-secondary-400">
-          {new Date(prompt.created_at).toLocaleDateString()}
-        </span>
-      </div>
-      {prompt.description && (
-        <p className="text-xs text-secondary-200">{prompt.description}</p>
-      )}
-      <div className="flex gap-2 pt-2">
-        <button
-          className="px-3 py-1 text-xs bg-accent-600 text-primary-900 rounded-md"
-          onClick={() => onUse(prompt)}
-        >
-          Usar
-        </button>
-        <button
-          className="px-3 py-1 text-xs bg-secondary-700 text-primary-100 rounded-md"
-          onClick={() => onEdit(prompt)}
-        >
-          Editar
-        </button>
-        <button
-          className="px-3 py-1 text-xs bg-red-700 text-primary-50 rounded-md"
-          onClick={() => onDelete(prompt)}
-        >
-          Eliminar
-        </button>
-      </div>
+    <div
+      className="
+        rounded-xl border border-slate-700
+        bg-slate-900/60
+        p-5 mb-4
+        shadow-md shadow-black/30
+      "
+    >
+      <h3 className="text-lg font-semibold text-emerald-400 mb-2">
+        {title}
+      </h3>
+
+      <p className="text-sm text-slate-300 leading-relaxed mb-4">
+        {content}
+      </p>
+
+      <Button variant="danger" className="w-auto px-4 py-1" onClick={handleDelete}>
+        Eliminar
+      </Button>
     </div>
   );
 }

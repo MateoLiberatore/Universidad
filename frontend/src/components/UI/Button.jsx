@@ -66,7 +66,7 @@ Button.propTypes = {
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
   loading: PropTypes.bool,
-  variant: PropTypes.oneOf(["primary", "secondary", "danger"]),
+  variant: PropTypes.oneOf(["primary", "secondary", "danger"]), 
   type: PropTypes.string,
   className: PropTypes.string,
 };

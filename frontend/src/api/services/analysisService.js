@@ -1,32 +1,34 @@
-const API_URL = import.meta.env.VITE_API_URL + "/analysis";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/v1/analysis`;
 
-export async function runAnalysis({ token, files, prompt }) {
-  const form = new FormData();
-  files.forEach(f => form.append("files", f));
-  form.append("prompt", prompt);
-
-  const res = await fetch(`${API_URL}/run`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: form
-  });
-
-  if (!res.ok) throw new Error("Error en el análisis");
-
-  return res.json();
+export function runAnalysis(token, payload) {
+  return sendRequest("POST", "/run", token, payload);
 }
 
-export async function exportAnalysis({ token, table, format }) {
-  const res = await fetch(`${API_URL}/export`, {
-    method: "POST",
+export function getHistory(token) {
+  return sendRequest("GET", "/history", token);
+}
+
+function sendRequest(method, endpoint, token, body = null) {
+  const config = {
+    method,
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
     },
-    body: JSON.stringify({ table, format })
-  });
+  };
 
-  if (!res.ok) throw new Error("Error al exportar");
+  if (body) {
+    config.body = JSON.stringify(body);
+  }
 
-  return res.blob();
+  return fetch(`${API_URL}${endpoint}`, config).then(handleResponse);
+}
+
+function handleResponse(response) {
+  if (!response.ok) {
+    return response.text().then((msg) => {
+      throw new Error(msg || "Error en el servicio de análisis");
+    });
+  }
+  return response.json();
 }

@@ -1,55 +1,36 @@
-const API_URL = import.meta.env.VITE_API_URL + "/prompts";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/v1/prompts`;
 
-function authHeaders(token) {
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`
+export function getPrompts(token) {
+  return sendRequest("GET", "/", token);
+}
+
+export function createPrompt(token, payload) {
+  return sendRequest("POST", "/", token, payload);
+}
+
+export function deletePrompt(token, id) {
+  return sendRequest("DELETE", `/${id}`, token);
+}
+
+function sendRequest(method, endpoint, token, body = null) {
+  const config = {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   };
+
+  if (body) config.body = JSON.stringify(body);
+
+  return fetch(`${API_URL}${endpoint}`, config).then(handleResponse);
 }
 
-export async function listPrompts(token) {
-  const res = await fetch(`${API_URL}/`, {
-    method: "GET",
-    headers: authHeaders(token)
-  });
-  if (!res.ok) throw new Error("Error al obtener prompts");
-  return res.json();
-}
-
-export async function getPrompt(token, id) {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "GET",
-    headers: authHeaders(token)
-  });
-  if (!res.ok) throw new Error("Error al cargar prompt");
-  return res.json();
-}
-
-export async function createPrompt(token, payload) {
-  const res = await fetch(`${API_URL}/`, {
-    method: "POST",
-    headers: authHeaders(token),
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok) throw new Error("Error al crear prompt");
-  return res.json();
-}
-
-export async function updatePrompt(token, id, payload) {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: authHeaders(token),
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok) throw new Error("Error al actualizar prompt");
-  return res.json();
-}
-
-export async function deletePrompt(token, id) {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE",
-    headers: authHeaders(token)
-  });
-  if (!res.ok) throw new Error("Error al eliminar prompt");
-  return res.json();
+function handleResponse(response) {
+  if (!response.ok) {
+    return response.text().then((msg) => {
+      throw new Error(msg || "Error en el servicio de prompts");
+    });
+  }
+  return response.json();
 }
