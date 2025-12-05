@@ -1,19 +1,35 @@
 import React from "react";
 import Login from "../features/authentication/Login";
 
-export default function LandingPage({ onLogin }) {
+export default function LandingPage(props) {
+  const { onLogin } = props;
+
+  function renderDocsLink() {
+    return (
+      <div className="mt-4 text-xs text-emerald-400">
+        <a
+          href="/docs"
+          className="underline underline-offset-4 hover:text-emerald-300"
+        >
+          Ver documentación de la API
+        </a>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-secondary-950 text-primary-50 flex items-center justify-center px-4">
-      <div className="max-w-md w-full space-y-8">
+    <div
+      className="
+        min-h-screen w-full
+        flex items-center
+        ps-16
+        bg-linear-to-br from-slate-950 via-slate-900 to-black
+        text-primary-50
+      "
+    >
+      <div className="w-full max-w-md">
         <Login onLogin={onLogin} />
-        <div className="text-center text-xs text-secondary-300">
-          <a
-            href="/docs"
-            className="text-accent-400 hover:text-accent-300"
-          >
-            Ver documentación de la API
-          </a>
-        </div>
+        {renderDocsLink()}
       </div>
     </div>
   );

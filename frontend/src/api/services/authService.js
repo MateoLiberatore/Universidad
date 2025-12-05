@@ -1,61 +1,34 @@
 const API_URL_BASE = `${import.meta.env.VITE_API_URL}/api/v1`;
-const BASE_URL = `${API_URL_BASE}/auth`;
+const AUTH_URL = `${API_URL_BASE}/auth`;
 
+export async function loginUser(email, password) {
+  const response = await fetch(`${AUTH_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
 
-export const loginUser = async (email, password) => {
-  try {
-    if (!email || !password) {
-      throw new Error("Username or password not provided.");
-    }
-
-    const response = await fetch(`${BASE_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", 
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Login Error: ${errorText}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error in loginUser:", error.message);
-    throw error;
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || "Error al iniciar sesión");
   }
-};
 
+  return response.json(); // { token, user }
+}
 
-export const getProfile = async (token) => {
-  try {
-    if (!token) throw new Error("Token not found.");
+export async function getProfile(token) {
+  const response = await fetch(`${AUTH_URL}/profile`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
-    const response = await fetch(`${BASE_URL}/profile`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      },
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      throw new Error("Could not fetch user profile.");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error en getProfile:", error.message);
-    throw error;
+  if (!response.ok) {
+    throw new Error("No se pudo obtener el perfil de usuario.");
   }
-};
 
+  return response.json(); // { user }
+}
 
-export const logoutUser = () => {
+export function logoutUser() {
   localStorage.removeItem("token");
-};
+}

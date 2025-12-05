@@ -1,52 +1,68 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { loginUser, getProfile } from "../api/services/authService";
+import { loginUser, getProfile, logoutUser } from "../api/services/authService";
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider(props) {
+  const { children } = props;
+
   const [user, setUser] = useState(null);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [token, setToken] = useState(null);
+  const [isInitialized, setInitialized] = useState(false);
 
-  
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      getProfile(token)
-        .then((profile) => setUser(profile))
-        .catch(() => {
-          localStorage.removeItem("token");
-          setUser(null);
-        })
-        .finally(() => setIsInitialized(true));
-    } else {
-      setIsInitialized(true);
+  function initialize() {
+    const savedToken = localStorage.getItem("token");
+
+    if (!savedToken) {
+      setInitialized(true);
+      return;
     }
-  }, []);
 
-  const handleLogin = async (email, password) => {
-    try {
-      const data = await loginUser(email, password);
-      if (data?.token) {
-        localStorage.setItem("token", data.token);
-        const profile = await getProfile(data.token);
-        setUser(profile);
-      }
-    } catch (err) {
-      console.error("Login Error:", err);
-      alert("Invalid Credentials");
-    }
-  };
+    getProfile(savedToken)
+      .then(function onSuccess(data) {
+        setUser(data.user);
+        setToken(savedToken);
+      })
+      .catch(function onError() {
+        logoutUser();
+      })
+      .finally(function onFinally() {
+        setInitialized(true);
+      });
+  }
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  useEffect(initialize, []);
+
+  async function handleLogin(email, password) {
+    const data = await loginUser(email, password);
+
+    localStorage.setItem("token", data.token);
+
+    setToken(data.token);
+    setUser(data.user || null);
+  }
+
+  function handleLogout() {
+    logoutUser();
     setUser(null);
-  };
+    setToken(null);
+  }
 
   return (
-    <AuthContext.Provider value={{ user, isInitialized, handleLogin, handleLogout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isInitialized,
+        handleLogin,
+        handleLogout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  return useContext(AuthContext);
+}
